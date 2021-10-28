@@ -3,4 +3,5 @@
     <string name="login">로그인</string>
     <string name="input_hint">TODO 입력</string>
     <string name="dummy_login">Dummy Login</string>
+    <string name="input_todo">입력</string>
 </resources>
