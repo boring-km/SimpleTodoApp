@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" android:orientation="horizontal"
+        android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_height="wrap_content">
+
+    <TextView
+            android:id="@+id/todoItemText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:layout_weight="1"
+            tools:text="TODO 항목"/>
+    <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:srcCompat="@drawable/ic_more_vert"
+            android:id="@+id/todoMenuButton"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"/>
+
+</LinearLayout>
