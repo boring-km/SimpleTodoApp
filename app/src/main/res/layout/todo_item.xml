@@ -6,6 +6,14 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_height="wrap_content">
 
+    <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="8dp"
+            android:background="@android:color/transparent"
+            tools:src="@drawable/unchecked"
+            android:contentDescription="@null"/>
+
     <TextView
             android:id="@+id/todoItemText"
             android:layout_width="0dp"
