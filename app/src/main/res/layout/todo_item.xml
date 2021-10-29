@@ -6,7 +6,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_height="wrap_content">
 
-    <ImageButton
+    <ImageView
+            android:id="@+id/todoCheckedImage"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_margin="8dp"
