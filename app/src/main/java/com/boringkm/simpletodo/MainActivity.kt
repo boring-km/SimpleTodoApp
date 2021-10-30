@@ -22,13 +22,28 @@ class MainActivity : AppCompatActivity() {
             "매일 QT", false
         )
     )
+    val todoItemAdapter = TodoItemAdapter(testList, this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val listView = findViewById<RecyclerView>(R.id.todoListView)
-        listView.adapter = TodoItemAdapter(testList, this)
+        listView.adapter = todoItemAdapter
+
+        todoInputButton.setOnClickListener {
+            val todoText = todoEditText.text.toString()
+            if (todoText.isNotBlank()) {
+                todoItemAdapter.add(
+                    TodoItem(
+                        todoText, false
+                    )
+                )
+                todoEditText.setText("")
+            }
+            todoItemAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onBackPressed() {

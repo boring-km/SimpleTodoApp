@@ -11,7 +11,7 @@ import com.boringkm.simpletodo.domain.TodoItem
 import kotlinx.android.synthetic.main.todo_item.view.*
 
 class TodoItemAdapter (
-    private val itemList: List<TodoItem>,
+    private val itemList: MutableList<TodoItem>,
     private val activity: AppCompatActivity
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -64,5 +64,9 @@ class TodoItemAdapter (
 
     override fun getItemCount(): Int {
         return itemList.size
+    }
+
+    fun add(item: TodoItem) {
+        itemList.add(item)
     }
 }
