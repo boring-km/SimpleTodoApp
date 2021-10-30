@@ -2,6 +2,7 @@ package com.boringkm.simpletodo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.boringkm.simpletodo.adapter.TodoItemAdapter
@@ -43,6 +44,15 @@ class MainActivity : AppCompatActivity() {
                 todoEditText.setText("")
             }
             todoItemAdapter.notifyDataSetChanged()
+        }
+        
+        todoEditText.setOnEditorActionListener { v, actionId, event ->
+
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                todoInputButton.callOnClick()
+            }
+
+            return@setOnEditorActionListener false
         }
     }
 
