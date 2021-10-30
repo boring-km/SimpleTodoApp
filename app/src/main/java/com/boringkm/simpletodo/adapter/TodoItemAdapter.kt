@@ -3,10 +3,7 @@ package com.boringkm.simpletodo.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.boringkm.simpletodo.R
@@ -34,6 +31,7 @@ class TodoItemAdapter (
             false
         )
     ) {
+        val layout: LinearLayout = itemView.todoItemLayout
         val todoMenuButton: ImageButton = itemView.todoMenuButton
         val todoItemText: TextView = itemView.todoItemText
         val todoImage: ImageView = itemView.todoCheckedImage
@@ -44,15 +42,23 @@ class TodoItemAdapter (
         if (holder is TodoItemListHolder) {
             selected.run {
                 holder.todoItemText.text = data
-                if (checked) {
-                    holder.todoImage.setImageResource(R.drawable.checked)
-                } else {
-                    holder.todoImage.setImageResource(R.drawable.unchecked)
+                holder.layout.setOnClickListener {
+                    checked = !checked
+                    showCheckedImage(holder)
                 }
+                showCheckedImage(holder)
                 holder.todoMenuButton.setOnClickListener {
                     Toast.makeText(context, "메뉴 버튼 클릭됨", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+    }
+
+    private fun TodoItem.showCheckedImage(holder: TodoItemListHolder) {
+        if (checked) {
+            holder.todoImage.setImageResource(R.drawable.checked)
+        } else {
+            holder.todoImage.setImageResource(R.drawable.unchecked)
         }
     }
 
