@@ -12,18 +12,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private var pressTime: Long = 0L
-    private val testList = arrayListOf<TodoItem>(
-        TodoItem(
-            "달리기", false
-        ),
-        TodoItem(
-            "매일 커밋", true
-        ),
-        TodoItem(
-            "매일 QT", false
-        )
-    )
-    val todoItemAdapter = TodoItemAdapter(testList, this)
+    private val testList = arrayListOf<TodoItem>()
+    private val todoItemAdapter = TodoItemAdapter(testList, this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +33,6 @@ class MainActivity : AppCompatActivity() {
                 )
                 todoEditText.setText("")
             }
-            todoItemAdapter.notifyDataSetChanged()
         }
         
         todoEditText.setOnEditorActionListener { v, actionId, event ->

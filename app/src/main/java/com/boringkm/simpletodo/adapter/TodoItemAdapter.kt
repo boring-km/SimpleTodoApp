@@ -68,5 +68,12 @@ class TodoItemAdapter (
 
     fun add(item: TodoItem) {
         itemList.add(item)
+        notifyDataSetChanged()
+    }
+
+    fun set(todoList: List<TodoItem>) {
+        itemList.clear()
+        itemList.addAll(todoList)
+        notifyDataSetChanged()
     }
 }
