@@ -1,5 +1,7 @@
 package com.boringkm.simpletodo
 
+import android.widget.Button
+import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -38,20 +40,29 @@ class MainActivityTest {
     @Before
     fun setUp() {
         activityScenarioRule.scenario.onActivity { activity ->
-            (activity.findViewById<RecyclerView>(R.id.todoListView))?.let { recyclerView ->
+            val listView = activity.findViewById<RecyclerView>(R.id.todoListView)
+            listView?.let { it ->
                 val addList = arrayListOf(
                     TodoItem(
                         "달리기", false
                     ),
                     TodoItem(
                         "매일 커밋", true
-                    ),
-                    TodoItem(
-                        "매일 QT", false
                     )
                 )
-                (recyclerView.adapter as TodoItemAdapter).set(addList)
+                (it.adapter as TodoItemAdapter).set(addList)
+                val editText = activity.findViewById<EditText>(R.id.todoEditText)
+                editText.setText("매일 QT")
+                activity.findViewById<Button>(R.id.todoInputButton).callOnClick()
             }
+        }
+    }
+
+    @Before
+    fun 새로운_항목을_입력하고_입력_버튼을_누르기() {
+        activityScenarioRule.scenario.onActivity { activity ->
+            activity.findViewById<EditText>(R.id.todoEditText).setText("매일 QT")
+            activity.findViewById<Button>(R.id.todoInputButton).callOnClick()
         }
     }
 
