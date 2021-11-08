@@ -20,12 +20,14 @@
                 android:layout_height="wrap_content"
                 android:text="Google Login"/>
 
-        <Button
+
+        <com.facebook.login.widget.LoginButton
                 android:id="@+id/facebook_login_button"
-                android:layout_gravity="center"
-                android:layout_width="150dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Facebook Login"/>
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp" />
 
         <Button
                 android:id="@+id/apple_login_button"

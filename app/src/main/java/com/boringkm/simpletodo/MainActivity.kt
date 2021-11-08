@@ -28,6 +28,9 @@ class MainActivity : AppCompatActivity() {
         val displayName = intent.getStringExtra("displayName")
         titleTextView.text = displayName
 
+        val token = intent.getStringExtra("idToken")
+        Toast.makeText(this, token, Toast.LENGTH_SHORT).show()
+
         val listView = findViewById<RecyclerView>(R.id.todoListView)
         listView.adapter = todoItemAdapter
 
@@ -43,12 +46,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         
-        todoEditText.setOnEditorActionListener { v, actionId, event ->
-
+        todoEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 todoInputButton.callOnClick()
             }
-
             return@setOnEditorActionListener false
         }
 
