@@ -12,11 +12,12 @@ android {
 
     defaultConfig {
         applicationId "com.boringkm.simpletodo"
-        minSdkVersion 23
+        minSdkVersion 19
+        //noinspection OldTargetApi
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

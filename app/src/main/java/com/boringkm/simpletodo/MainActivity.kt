@@ -1,8 +1,11 @@
 package com.boringkm.simpletodo
 
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +14,7 @@ import com.boringkm.simpletodo.auth.Auth
 import com.boringkm.simpletodo.domain.TodoItem
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private var auth: Auth? = null
     private var pressTime: Long = 0L
@@ -25,26 +28,23 @@ class MainActivity : AppCompatActivity() {
 
         auth = Auth()
 
-        val displayName = intent.getStringExtra("displayName")
-        titleTextView.text = displayName
-
         val token = intent.getStringExtra("idToken")
         Toast.makeText(this, token, Toast.LENGTH_SHORT).show()
 
-        val listView = findViewById<RecyclerView>(R.id.todoListView)
-        listView.adapter = todoItemAdapter
-
-        todoInputButton.setOnClickListener {
-            val todoText = todoEditText.text.toString()
-            if (todoText.isNotBlank()) {
-                todoItemAdapter.add(
-                    TodoItem(
-                        todoText, false
-                    )
-                )
-                todoEditText.setText("")
-            }
-        }
+//        val listView = findViewById<RecyclerView>(R.id.todoListView)
+//        listView.adapter = todoItemAdapter
+//
+//        todoInputButton.setOnClickListener {
+//            val todoText = todoEditText.text.toString()
+//            if (todoText.isNotBlank()) {
+//                todoItemAdapter.add(
+//                    TodoItem(
+//                        todoText, false
+//                    )
+//                )
+//                todoEditText.setText("")
+//            }
+//        }
         
         todoEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
