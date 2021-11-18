@@ -5,9 +5,12 @@ import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.boringkm.simpletodo.adapter.TodoItemAdapter
 import com.boringkm.simpletodo.auth.Auth
@@ -26,25 +29,28 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
         auth = Auth()
 
         val token = intent.getStringExtra("idToken")
         Toast.makeText(this, token, Toast.LENGTH_SHORT).show()
+        Log.d("token", token!!);
 
-//        val listView = findViewById<RecyclerView>(R.id.todoListView)
-//        listView.adapter = todoItemAdapter
-//
-//        todoInputButton.setOnClickListener {
-//            val todoText = todoEditText.text.toString()
-//            if (todoText.isNotBlank()) {
-//                todoItemAdapter.add(
-//                    TodoItem(
-//                        todoText, false
-//                    )
-//                )
-//                todoEditText.setText("")
-//            }
-//        }
+        val listView = findViewById<RecyclerView>(R.id.todoListView)
+        listView.adapter = todoItemAdapter
+
+        todoInputButton.setOnClickListener {
+            val todoText = todoEditText.text.toString()
+            if (todoText.isNotBlank()) {
+                todoItemAdapter.add(
+                    TodoItem(
+                        todoText, false
+                    )
+                )
+                todoEditText.setText("")
+            }
+        }
         
         todoEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
