@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 
 open class BaseActivity : AppCompatActivity() {
@@ -17,5 +18,7 @@ open class BaseActivity : AppCompatActivity() {
                 statusBarColor = Color.TRANSPARENT
             }
         }
+
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 }

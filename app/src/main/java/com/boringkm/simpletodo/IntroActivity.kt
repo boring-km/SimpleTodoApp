@@ -6,7 +6,7 @@ import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 
 
-class IntroActivity : AppCompatActivity() {
+class IntroActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)

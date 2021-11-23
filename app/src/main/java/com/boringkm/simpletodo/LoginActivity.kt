@@ -23,7 +23,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -45,6 +45,8 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+        val currentUser = auth.currentUser
+        moveToMainActivity(currentUser)
     }
 
     private fun initializeFirebaseAuth() {
@@ -52,14 +54,14 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initializeGoogleAuth() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         google_login_button.setOnClickListener {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+            googleSignInClient = GoogleSignIn.getClient(this, gso)
             signIn()
         }
     }
@@ -82,18 +84,11 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    override fun onStart() {
-        super.onStart()
-        initializeFirebaseAuth()
-        val currentUser = auth.currentUser
-        moveToMainActivity(currentUser)
-    }
-
     private fun moveToMainActivity(user: FirebaseUser?) {
         if (user == null) {
             return
         }
-        user.getIdToken(true).addOnCompleteListener {
+        user.getIdToken(false).addOnCompleteListener {
             if (it.isSuccessful) {
                 val intent = Intent(this@LoginActivity, MainActivity::class.java)
                 intent.putExtra("idToken", it.result.token)
