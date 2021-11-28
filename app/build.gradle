@@ -12,11 +12,12 @@ android {
 
     defaultConfig {
         applicationId "com.boringkm.simpletodo"
-        minSdkVersion 23
+        minSdkVersion 19
+        //noinspection OldTargetApi
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -53,6 +54,8 @@ dependencies {
 
     // Also declare the dependency for the Google Play services library and specify its version
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
+
+    implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.hamcrest:hamcrest-all:1.3'

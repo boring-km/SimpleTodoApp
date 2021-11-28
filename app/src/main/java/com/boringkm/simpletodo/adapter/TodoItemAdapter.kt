@@ -32,9 +32,9 @@ class TodoItemAdapter (
         )
     ) {
         val layout: LinearLayout = itemView.todoItemLayout
-        val todoMenuButton: ImageButton = itemView.todoMenuButton
         val todoItemText: TextView = itemView.todoItemText
         val todoImage: ImageView = itemView.todoCheckedImage
+        val todoMenuButton: ImageButton = itemView.todoMenuButton
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -47,8 +47,17 @@ class TodoItemAdapter (
                     showCheckedImage(holder)
                 }
                 showCheckedImage(holder)
-                holder.todoMenuButton.setOnClickListener {
-                    Toast.makeText(context, "메뉴 버튼 클릭됨", Toast.LENGTH_SHORT).show()
+                holder.todoMenuButton.setOnClickListener { view ->
+                    val popupMenu = PopupMenu(context, view)
+                    popupMenu.inflate(R.menu.item_popup)
+                    popupMenu.setOnMenuItemClickListener {
+                        when(it.itemId) {
+                            R.id.item_menu1 -> Toast.makeText(context, "수정하기", Toast.LENGTH_SHORT).show()
+                            R.id.item_menu2 -> Toast.makeText(context, "삭제하기", Toast.LENGTH_SHORT).show()
+                        }
+                        return@setOnMenuItemClickListener false
+                    }
+                    popupMenu.show()
                 }
             }
         }

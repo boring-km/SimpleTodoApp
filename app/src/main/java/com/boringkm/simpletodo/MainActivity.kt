@@ -1,9 +1,10 @@
 package com.boringkm.simpletodo
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.inputmethod.EditorInfo
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.boringkm.simpletodo.adapter.TodoItemAdapter
@@ -11,11 +12,18 @@ import com.boringkm.simpletodo.auth.Auth
 import com.boringkm.simpletodo.domain.TodoItem
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private var auth: Auth? = null
     private var pressTime: Long = 0L
-    private val testList = arrayListOf<TodoItem>()
+    private val testList = arrayListOf(
+        TodoItem(
+            "Todo 항목 1", false
+        ),
+        TodoItem(
+            "Todo 항목 2", true
+        )
+    )
     private val todoItemAdapter = TodoItemAdapter(testList, this)
 
 
@@ -25,8 +33,9 @@ class MainActivity : AppCompatActivity() {
 
         auth = Auth()
 
-        val displayName = intent.getStringExtra("displayName")
-        titleTextView.text = displayName
+        val token = intent.getStringExtra("idToken")
+        Toast.makeText(this, token, Toast.LENGTH_SHORT).show()
+        Log.d("token", token!!)
 
         val listView = findViewById<RecyclerView>(R.id.todoListView)
         listView.adapter = todoItemAdapter
@@ -43,21 +52,31 @@ class MainActivity : AppCompatActivity() {
             }
         }
         
-        todoEditText.setOnEditorActionListener { v, actionId, event ->
-
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
+        todoEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
                 todoInputButton.callOnClick()
             }
-
             return@setOnEditorActionListener false
         }
 
-        logoutButton.setOnClickListener {
-            auth!!.signOut()
-            val intent = Intent(this@MainActivity, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+        user_menu.setOnClickListener { view ->
+            val popupMenu = PopupMenu(applicationContext, view)
+            menuInflater.inflate(R.menu.user_popup, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener {
+                if (it.itemId == R.id.user_menu1) {
+                    logout()
+                }
+                return@setOnMenuItemClickListener false
+            }
+            popupMenu.show()
         }
+    }
+
+    private fun logout() {
+        auth!!.signOut()
+        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     override fun onBackPressed() {

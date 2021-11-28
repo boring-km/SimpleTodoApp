@@ -2,6 +2,7 @@
 
 - 단순한 Todo App에서 시작
 - Kotlin 1.5.10
+- 서버: https://github.com/ghals5737/ToDoListApi
 
 ### 예상되는 기본 기능
 - SNS 로그인
