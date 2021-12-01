@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import com.boringkm.simpletodo.api.App
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 
 
@@ -46,7 +48,7 @@ class LoginActivity : BaseActivity() {
             finish()
         }
         val currentUser = auth.currentUser
-        moveToMainActivity(currentUser)
+        signUp(currentUser)
     }
 
     private fun initializeFirebaseAuth() {
@@ -84,17 +86,26 @@ class LoginActivity : BaseActivity() {
         })
     }
 
-    private fun moveToMainActivity(user: FirebaseUser?) {
+    private fun signUp(user: FirebaseUser?) {
         if (user == null) {
             return
         }
         user.getIdToken(false).addOnCompleteListener {
             if (it.isSuccessful) {
-                val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                intent.putExtra("idToken", it.result.token)
-                intent.putExtra("displayName", user.displayName)
-                startActivity(intent)
-                finish()
+                val token: String? = it.result.token
+                if (token != null) {
+                    App.get().userService.register("Bearer $token")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            intent.putExtra("idToken", token)
+                            intent.putExtra("displayName", user.displayName)
+                            startActivity(intent)
+                            finish()
+                        }, { error -> Log.e("유저 등록 에러", error.message!!) })
+                }
+
             }
         }
     }
@@ -123,11 +134,11 @@ class LoginActivity : BaseActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    moveToMainActivity(auth.currentUser)
+                    signUp(auth.currentUser)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    moveToMainActivity(null)
+                    signUp(null)
                 }
             }
     }
@@ -137,7 +148,7 @@ class LoginActivity : BaseActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    moveToMainActivity(auth.currentUser)
+                    signUp(auth.currentUser)
                 } else {
                     // 로그인 실패
 
