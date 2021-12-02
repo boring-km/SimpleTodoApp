@@ -17,6 +17,9 @@ import com.boringkm.simpletodo.util.App
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : BaseActivity() {
 
@@ -42,20 +45,28 @@ class MainActivity : BaseActivity() {
         todoInputButton.setOnClickListener {
             val todoText = todoEditText.text.toString()
             if (todoText.isNotBlank()) {
-                App.get().scheduleService.insertSchedule(token, ScheduleReq(title = todoText))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ response: ScheduleRes -> run {
-                        if (response.title == todoText) {
-                            todoItemAdapter.add(
-                                Schedule(
-                                    title = todoText
-                                )
-                            )
+                val call = App.get().scheduleService.insertSchedule(token, ScheduleReq(title = todoText))
+                call.enqueue(object : Callback<ScheduleRes>{
+                    override fun onResponse(call: Call<ScheduleRes>, response: Response<ScheduleRes>) {
+                        if (response.isSuccessful) {
+                            val result = response.body()
+                            if (result != null) {
+                                if (result.title == todoText) {
+                                    todoItemAdapter.add(
+                                        Schedule(
+                                            title = todoText
+                                        )
+                                    )
+                                }
+                            }
                         }
+
                     }
-                    }, { error -> Log.e("todo 항목 추가 에러", error.message!!)})
-                    .apply {  }
+
+                    override fun onFailure(call: Call<ScheduleRes>, error: Throwable) {
+                        Log.e("todo 항목 추가 에러", error.message!!)
+                    }
+                })
                 todoEditText.setText("")
             }
         }
@@ -81,20 +92,26 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getTodoList(token: String) {
-        App.get().scheduleService.getSchedule(token)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ result: List<ScheduleRes> ->
-                run {
-                    for (item in result) {
-                        testList.add(
-                            item.convertScheduleReqToSchedule()
-                        )
+        val call: Call<List<ScheduleRes>> = App.get().scheduleService.getSchedule(token)
+        call.enqueue(object : Callback<List<ScheduleRes>> {
+            override fun onResponse(call: Call<List<ScheduleRes>>, response: Response<List<ScheduleRes>>) {
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    if (result != null) {
+                        for (item in result) {
+                            testList.add(
+                                item.convertScheduleReqToSchedule()
+                            )
+                        }
                     }
                 }
-            }, { error ->
+
+            }
+
+            override fun onFailure(call: Call<List<ScheduleRes>>, error: Throwable) {
                 Log.d("error", error.message!!)
-            }).apply { }
+            }
+        })
     }
 
     private fun logout() {

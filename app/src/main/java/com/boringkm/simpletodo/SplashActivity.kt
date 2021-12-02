@@ -9,8 +9,9 @@ import com.boringkm.simpletodo.util.App
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class SplashActivity : AppCompatActivity() {
@@ -56,18 +57,26 @@ class SplashActivity : AppCompatActivity() {
 
                 hasUserToken = true
                 Handler().postDelayed({
-                    App.get().userService.register("Bearer ${it.result.token}")
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ result ->
-                            if (result == "SUCCESS") {
-                                val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                                intent.putExtra("idToken", it.result.token)
-                                intent.putExtra("displayName", user.displayName)
-                                startActivity(intent)
-                                finish()
+                    val call = App.get().userService.register("Bearer ${it.result.token}")
+                    val req = call.request()
+                    call.enqueue(object : Callback<String> {
+                        override fun onResponse(call: Call<String>, response: Response<String>) {
+                            if (response.isSuccessful && response.body() != null) {
+                                val result = response.body()!!
+                                if (result == "SUCCESSS") {
+                                    val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                                    intent.putExtra("idToken", it.result.token)
+                                    intent.putExtra("displayName", user.displayName)
+                                    startActivity(intent)
+                                    finish()
+                                }
                             }
-                        }, { error -> Log.e("로그인 에러", error.message!!) }).apply {  }
+                        }
+
+                        override fun onFailure(call: Call<String>, error: Throwable) {
+                            Log.e("로그인 에러", error.message!!)
+                        }
+                    })
                 }, delay)
             }
         }

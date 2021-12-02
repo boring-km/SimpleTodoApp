@@ -20,9 +20,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class LoginActivity : BaseActivity() {
@@ -96,24 +97,29 @@ class LoginActivity : BaseActivity() {
             if (it.isSuccessful) {
                 val token: String? = it.result.token
                 if (token != null) {
-                    App.get().userService.register("Bearer $token")
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ result ->
-                            if (result == "SUCCESS") {
-                                Log.d("인증결과", "성공")
-                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                intent.putExtra("idToken", token)
-                                intent.putExtra("displayName", user.displayName)
-                                startActivity(intent)
-                                finish()
-                            } else {
-                                Log.e("인증 실패", result)
+                    val call = App.get().userService.register("Bearer $token")
+                    call.enqueue(object: Callback<String> {
+                        override fun onResponse(call: Call<String>, response: Response<String>) {
+                            if (response.isSuccessful && response.body() != null) {
+                                val result = response.body()
+                                if (result == "SUCCESS") {
+                                    Log.d("인증결과", "성공")
+                                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                    intent.putExtra("idToken", token)
+                                    intent.putExtra("displayName", user.displayName)
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Log.e("인증 실패", result!!)
+                                }
                             }
+                        }
 
-                        }, { error -> Log.e("유저 등록 에러", error.message!!) })
+                        override fun onFailure(call: Call<String>, error: Throwable) {
+                            Log.e("유저 등록 에러", error.message!!)
+                        }
+                    })
                 }
-
             }
         }
     }

@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Module
 class NetModule(private val context: Context) {
 
-    private val url = "http://192.168.35.2:8080/api/"
+    private val url = "http://192.168.35.2:8080/"
 
     @Provides
     @Singleton
@@ -33,7 +33,7 @@ class NetModule(private val context: Context) {
 
     @Provides
     @Singleton
-    fun provideGson(): Gson = GsonBuilder().create()
+    fun provideGson(): Gson = GsonBuilder().setLenient().create()
 
     @Provides
     @Singleton
@@ -50,8 +50,8 @@ class NetModule(private val context: Context) {
     fun provideBaseRetrofit(builder: Retrofit.Builder, client: OkHttpClient, gson: Gson): Retrofit =
         builder.baseUrl(url)
             .client(client)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
 
     @Provides
