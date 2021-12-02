@@ -1,9 +1,11 @@
-package com.boringkm.simpletodo.api
+package com.boringkm.simpletodo.util
 
-import android.app.Application
+import androidx.multidex.MultiDexApplication
+import com.boringkm.simpletodo.api.ScheduleService
+import com.boringkm.simpletodo.api.UserService
 import javax.inject.Inject
 
-class App : Application() {
+class App : MultiDexApplication() {
 
     @Inject
     lateinit var userService: UserService
@@ -17,6 +19,10 @@ class App : Application() {
         super.onCreate()
         app = this
         configureAppComponent()
+    }
+
+    fun getAppComponent(): AppComponent {
+        return appComponent
     }
 
     private fun configureAppComponent() {

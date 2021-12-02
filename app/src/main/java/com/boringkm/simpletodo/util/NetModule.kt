@@ -1,12 +1,15 @@
-package com.boringkm.simpletodo.api
+package com.boringkm.simpletodo.util
 
 import android.content.Context
+import com.boringkm.simpletodo.api.ScheduleService
+import com.boringkm.simpletodo.api.UserService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -14,7 +17,7 @@ import javax.inject.Singleton
 @Module
 class NetModule(private val context: Context) {
 
-    private val url = "http://localhost:8080/api/"
+    private val url = "http://192.168.35.2:8080/api/"
 
     @Provides
     @Singleton
@@ -47,6 +50,7 @@ class NetModule(private val context: Context) {
     fun provideBaseRetrofit(builder: Retrofit.Builder, client: OkHttpClient, gson: Gson): Retrofit =
         builder.baseUrl(url)
             .client(client)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 

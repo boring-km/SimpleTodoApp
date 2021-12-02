@@ -2,6 +2,7 @@ package com.boringkm.simpletodo
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.PopupMenu
@@ -9,21 +10,19 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.boringkm.simpletodo.adapter.TodoItemAdapter
 import com.boringkm.simpletodo.auth.Auth
-import com.boringkm.simpletodo.domain.TodoItem
+import com.boringkm.simpletodo.domain.Schedule
+import com.boringkm.simpletodo.domain.ScheduleReq
+import com.boringkm.simpletodo.domain.ScheduleRes
+import com.boringkm.simpletodo.util.App
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
 
     private var auth: Auth? = null
     private var pressTime: Long = 0L
-    private val testList = arrayListOf(
-        TodoItem(
-            "Todo 항목 1", false
-        ),
-        TodoItem(
-            "Todo 항목 2", true
-        )
-    )
+    private val testList = arrayListOf<Schedule>()
     private val todoItemAdapter = TodoItemAdapter(testList, this)
 
 
@@ -32,22 +31,31 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
         auth = Auth()
-
-        val token = intent.getStringExtra("idToken")
-        Toast.makeText(this, token, Toast.LENGTH_SHORT).show()
-        Log.d("token", token!!)
+        val token = "Bearer ${intent.getStringExtra("idToken")}"
 
         val listView = findViewById<RecyclerView>(R.id.todoListView)
         listView.adapter = todoItemAdapter
 
+        App.get().getAppComponent().inject(this)
+        getTodoList(token)
+
         todoInputButton.setOnClickListener {
             val todoText = todoEditText.text.toString()
             if (todoText.isNotBlank()) {
-                todoItemAdapter.add(
-                    TodoItem(
-                        todoText, false
-                    )
-                )
+                App.get().scheduleService.insertSchedule(token, ScheduleReq(title = todoText))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ response: ScheduleRes -> run {
+                        if (response.title == todoText) {
+                            todoItemAdapter.add(
+                                Schedule(
+                                    title = todoText
+                                )
+                            )
+                        }
+                    }
+                    }, { error -> Log.e("todo 항목 추가 에러", error.message!!)})
+                    .apply {  }
                 todoEditText.setText("")
             }
         }
@@ -70,6 +78,23 @@ class MainActivity : BaseActivity() {
             }
             popupMenu.show()
         }
+    }
+
+    private fun getTodoList(token: String) {
+        App.get().scheduleService.getSchedule(token)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ result: List<ScheduleRes> ->
+                run {
+                    for (item in result) {
+                        testList.add(
+                            item.convertScheduleReqToSchedule()
+                        )
+                    }
+                }
+            }, { error ->
+                Log.d("error", error.message!!)
+            }).apply { }
     }
 
     private fun logout() {

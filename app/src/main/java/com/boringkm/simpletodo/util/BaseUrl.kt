@@ -1,4 +1,4 @@
-package com.boringkm.simpletodo.api
+package com.boringkm.simpletodo.util
 
 import javax.inject.Qualifier
 

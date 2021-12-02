@@ -3,10 +3,14 @@ package com.boringkm.simpletodo
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.boringkm.simpletodo.util.App
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
 class SplashActivity : AppCompatActivity() {
@@ -17,6 +21,8 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_intro)
+
+        App.get().getAppComponent().inject(this)
 
         delayTime = System.currentTimeMillis()
         @Suppress("DEPRECATION")
@@ -50,11 +56,18 @@ class SplashActivity : AppCompatActivity() {
 
                 hasUserToken = true
                 Handler().postDelayed({
-                    val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                    intent.putExtra("idToken", it.result.token)
-                    intent.putExtra("displayName", user.displayName)
-                    startActivity(intent)
-                    finish()
+                    App.get().userService.register("Bearer ${it.result.token}")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ result ->
+                            if (result == "SUCCESS") {
+                                val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                                intent.putExtra("idToken", it.result.token)
+                                intent.putExtra("displayName", user.displayName)
+                                startActivity(intent)
+                                finish()
+                            }
+                        }, { error -> Log.e("로그인 에러", error.message!!) }).apply {  }
                 }, delay)
             }
         }

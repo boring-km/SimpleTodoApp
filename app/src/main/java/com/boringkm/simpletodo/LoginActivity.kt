@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.boringkm.simpletodo.api.App
+import com.boringkm.simpletodo.util.App
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -35,6 +35,8 @@ class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        App.get().getAppComponent().inject(this)
 
         initializeFirebaseAuth()
         initializeGoogleAuth()
@@ -97,12 +99,18 @@ class LoginActivity : BaseActivity() {
                     App.get().userService.register("Bearer $token")
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            intent.putExtra("idToken", token)
-                            intent.putExtra("displayName", user.displayName)
-                            startActivity(intent)
-                            finish()
+                        .subscribe({ result ->
+                            if (result == "SUCCESS") {
+                                Log.d("인증결과", "성공")
+                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                intent.putExtra("idToken", token)
+                                intent.putExtra("displayName", user.displayName)
+                                startActivity(intent)
+                                finish()
+                            } else {
+                                Log.e("인증 실패", result)
+                            }
+
                         }, { error -> Log.e("유저 등록 에러", error.message!!) })
                 }
 

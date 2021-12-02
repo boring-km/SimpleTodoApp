@@ -2,22 +2,23 @@ package com.boringkm.simpletodo.api
 
 import com.boringkm.simpletodo.domain.ScheduleReq
 import com.boringkm.simpletodo.domain.ScheduleRes
+import io.reactivex.Single
 import retrofit2.http.*
 
 interface ScheduleService {
 
     @GET("/schedule")
-    fun getSchedule(): List<ScheduleRes>
+    fun getSchedule(@Header("Authorization") token: String): Single<List<ScheduleRes>>
 
     @GET("/schedule/{title}")
-    fun getSchedule(@Path("title") title: String): List<ScheduleRes>
+    fun getScheduleWithTitle(@Header("Authorization") token: String, @Path("title") title: String): Single<List<ScheduleRes>>
 
     @POST("/schedule")
-    fun insertSchedule(@Body schedule: ScheduleReq): ScheduleRes
+    fun insertSchedule(@Header("Authorization") token: String, @Body schedule: ScheduleReq): Single<ScheduleRes>
 
     @PUT("/schedule/{id}")
-    fun updateSchedule(@Body schedule: ScheduleReq, @Path("id") id: String): ScheduleRes
+    fun updateSchedule(@Header("Authorization") token: String, @Body schedule: ScheduleReq, @Path("id") id: String): Single<ScheduleRes>
 
     @DELETE("/schedule/{id}")
-    fun deleteSchedule(@Body schedule: ScheduleReq, @Path("id") id: String): ScheduleRes
+    fun deleteSchedule(@Header("Authorization") token: String, @Body schedule: ScheduleReq, @Path("id") id: String): Single<ScheduleRes>
 }

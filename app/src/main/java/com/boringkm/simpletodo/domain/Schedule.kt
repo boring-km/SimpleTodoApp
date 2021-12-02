@@ -17,7 +17,6 @@ data class ScheduleReq(
     var des: String? = null,
     var doneYn: Boolean? = false,
 )
-
 data class ScheduleRes(
     var id: String? = null,
     var userId: String? = null,
@@ -25,4 +24,10 @@ data class ScheduleRes(
     var des: String? = null,
     var doneYn: Boolean? = false,
     var regDt: Date? = null
-)
+) {
+    fun convertScheduleReqToSchedule(): Schedule {
+        return Schedule(
+            id, userId, title, doneYn, des, regDt
+        )
+    }
+}
