@@ -3,6 +3,7 @@ package com.boringkm.simpletodo
 import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,7 @@ class MainActivity : BaseActivity(), MainContract.View {
     private val itemList = arrayListOf<Schedule>()
     private val todoItemAdapter = TodoItemAdapter(itemList, this)
     private lateinit var presenter: MainContract.Presenter
+    private lateinit var imm: InputMethodManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +32,7 @@ class MainActivity : BaseActivity(), MainContract.View {
         val token = "Bearer ${intent.getStringExtra("idToken")}"
         presenter = MainPresenter(this, token)
         App.get().getAppComponent().inject(this)
+        imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
         initializeView()
     }
@@ -42,13 +45,15 @@ class MainActivity : BaseActivity(), MainContract.View {
         todoInputButton.setOnClickListener {
             val todoText = todoEditText.text.toString()
             presenter.insertItem(todoText)
+            todoEditText.setText("")
         }
 
         todoEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
                 todoInputButton.callOnClick()
+                imm.hideSoftInputFromWindow(todoEditText.windowToken, 0)
             }
-            return@setOnEditorActionListener false
+            return@setOnEditorActionListener true
         }
 
         user_menu.setOnClickListener { view ->
