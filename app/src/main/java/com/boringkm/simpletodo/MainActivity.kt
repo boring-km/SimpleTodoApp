@@ -2,8 +2,6 @@ package com.boringkm.simpletodo
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.PopupMenu
 import android.widget.Toast
@@ -11,66 +9,41 @@ import androidx.recyclerview.widget.RecyclerView
 import com.boringkm.simpletodo.adapter.TodoItemAdapter
 import com.boringkm.simpletodo.auth.Auth
 import com.boringkm.simpletodo.domain.Schedule
-import com.boringkm.simpletodo.domain.ScheduleReq
-import com.boringkm.simpletodo.domain.ScheduleRes
+import com.boringkm.simpletodo.main.MainContract
+import com.boringkm.simpletodo.main.MainPresenter
 import com.boringkm.simpletodo.util.App
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), MainContract.View {
 
-    private var auth: Auth? = null
+    private var auth: Auth = Auth()
     private var pressTime: Long = 0L
-    private val testList = arrayListOf<Schedule>()
-    private val todoItemAdapter = TodoItemAdapter(testList, this)
+    private val itemList = arrayListOf<Schedule>()
+    private val todoItemAdapter = TodoItemAdapter(itemList, this)
+    private lateinit var presenter: MainContract.Presenter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        auth = Auth()
         val token = "Bearer ${intent.getStringExtra("idToken")}"
+        presenter = MainPresenter(this, token)
+        App.get().getAppComponent().inject(this)
+
+        initializeView()
+    }
+
+    private fun initializeView() {
 
         val listView = findViewById<RecyclerView>(R.id.todoListView)
         listView.adapter = todoItemAdapter
 
-        App.get().getAppComponent().inject(this)
-        getTodoList(token)
-
         todoInputButton.setOnClickListener {
             val todoText = todoEditText.text.toString()
-            if (todoText.isNotBlank()) {
-                val call = App.get().scheduleService.insertSchedule(token, ScheduleReq(title = todoText))
-                call.enqueue(object : Callback<ScheduleRes>{
-                    override fun onResponse(call: Call<ScheduleRes>, response: Response<ScheduleRes>) {
-                        if (response.isSuccessful) {
-                            val result = response.body()
-                            if (result != null) {
-                                if (result.title == todoText) {
-                                    todoItemAdapter.add(
-                                        Schedule(
-                                            title = todoText
-                                        )
-                                    )
-                                }
-                            }
-                        }
-
-                    }
-
-                    override fun onFailure(call: Call<ScheduleRes>, error: Throwable) {
-                        Log.e("todo 항목 추가 에러", error.message!!)
-                    }
-                })
-                todoEditText.setText("")
-            }
+            presenter.insertItem(todoText)
         }
-        
+
         todoEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
                 todoInputButton.callOnClick()
@@ -91,31 +64,23 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun getTodoList(token: String) {
-        val call: Call<List<ScheduleRes>> = App.get().scheduleService.getSchedule(token)
-        call.enqueue(object : Callback<List<ScheduleRes>> {
-            override fun onResponse(call: Call<List<ScheduleRes>>, response: Response<List<ScheduleRes>>) {
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    if (result != null) {
-                        for (item in result) {
-                            testList.add(
-                                item.convertScheduleReqToSchedule()
-                            )
-                        }
-                    }
-                }
+    override fun onResume() {
+        super.onResume()
+        presenter.start()
+    }
 
-            }
 
-            override fun onFailure(call: Call<List<ScheduleRes>>, error: Throwable) {
-                Log.d("error", error.message!!)
-            }
-        })
+    override fun getTodoList(list: List<Schedule>) {
+        itemList.clear()
+        itemList.addAll(list)
+    }
+
+    override fun getInsertResult(item: Schedule) {
+        todoItemAdapter.add(item)
     }
 
     private fun logout() {
-        auth!!.signOut()
+        auth.signOut()
         val intent = Intent(this@MainActivity, LoginActivity::class.java)
         startActivity(intent)
         finish()

@@ -28,7 +28,8 @@ class SplashActivity : AppCompatActivity() {
         delayTime = System.currentTimeMillis()
         @Suppress("DEPRECATION")
         Handler().postDelayed({
-            if (!hasUserToken) {                val intent = Intent(this, LoginActivity::class.java)
+            if (!hasUserToken) {
+                val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
             }
