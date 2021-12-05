@@ -64,7 +64,7 @@ class SplashActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<String>, response: Response<String>) {
                             if (response.isSuccessful && response.body() != null) {
                                 val result = response.body()!!
-                                if (result == "SUCCESSS") {
+                                if (result == "SUCCESS") {
                                     val intent = Intent(this@SplashActivity, MainActivity::class.java)
                                     intent.putExtra("idToken", it.result.token)
                                     intent.putExtra("displayName", user.displayName)
