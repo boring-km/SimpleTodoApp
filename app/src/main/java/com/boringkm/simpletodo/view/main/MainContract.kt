@@ -1,4 +1,4 @@
-package com.boringkm.simpletodo.main
+package com.boringkm.simpletodo.view.main
 
 import com.boringkm.simpletodo.domain.Schedule
 

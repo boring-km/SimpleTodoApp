@@ -1,10 +1,13 @@
-package com.boringkm.simpletodo
+package com.boringkm.simpletodo.view.login
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.boringkm.simpletodo.R
 import com.boringkm.simpletodo.util.App
+import com.boringkm.simpletodo.view.BaseActivity
+import com.boringkm.simpletodo.view.main.MainActivity
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -21,16 +24,14 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
-class LoginActivity : BaseActivity() {
+class LoginActivity : BaseActivity(), LoginContract.View {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var facebookCallback: CallbackManager
+    private var currentUser: FirebaseUser? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +51,7 @@ class LoginActivity : BaseActivity() {
             startActivity(intent)
             finish()
         }
-        val currentUser = auth.currentUser
+        currentUser = auth.currentUser
         signUp(currentUser)
     }
 
@@ -95,36 +96,14 @@ class LoginActivity : BaseActivity() {
         }
         user.getIdToken(false).addOnCompleteListener {
             if (it.isSuccessful) {
-                val token: String? = it.result.token
-                if (token != null) {
-                    val call = App.get().userService.register("Bearer $token")
-                    call.enqueue(object: Callback<String> {
-                        override fun onResponse(call: Call<String>, response: Response<String>) {
-                            if (response.isSuccessful && response.body() != null) {
-                                val result = response.body()
-                                if (result == "SUCCESS") {
-                                    Log.d("인증결과", "성공")
-                                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                    intent.putExtra("idToken", token)
-                                    intent.putExtra("displayName", user.displayName)
-                                    startActivity(intent)
-                                    finish()
-                                } else {
-                                    Log.e("인증 실패", result!!)
-                                }
-                            }
-                        }
-
-                        override fun onFailure(call: Call<String>, error: Throwable) {
-                            Log.e("유저 등록 에러", error.message!!)
-                        }
-                    })
-                }
+                val presenter = LoginPresenter(this, it.result.token!!)
+                presenter.start()
             }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        @Suppress("DEPRECATION")
         super.onActivityResult(requestCode, resultCode, data)
 
         facebookCallback.onActivityResult(requestCode, resultCode, data)
@@ -172,11 +151,23 @@ class LoginActivity : BaseActivity() {
 
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
+        @Suppress("DEPRECATION")
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
     companion object {
         private const val TAG = "GoogleActivity"
         private const val RC_SIGN_IN = 9001
+    }
+
+    override fun login(token: String) {
+        if (currentUser != null) {
+            Log.d("인증결과", "성공")
+            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+            intent.putExtra("idToken", token)
+            intent.putExtra("displayName", currentUser!!.displayName)
+            startActivity(intent)
+            finish()
+        }
     }
 }

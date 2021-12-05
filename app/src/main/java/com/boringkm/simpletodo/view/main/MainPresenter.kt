@@ -1,13 +1,14 @@
-package com.boringkm.simpletodo.main
+package com.boringkm.simpletodo.view.main
 
 import android.util.Log
+import com.boringkm.simpletodo.view.ProviderResultListener
 
 class MainPresenter(
     private val view: MainContract.View,
-    private val token: String
+    token: String
 ): MainContract.Presenter {
 
-    var provider: MainProvider = MainProvider(token)
+    private var provider: MainProvider = MainProvider(token)
 
     override fun start() {
         provider.callData(object : ProviderResultListener {

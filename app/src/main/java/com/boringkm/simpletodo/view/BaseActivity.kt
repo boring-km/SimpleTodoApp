@@ -1,4 +1,4 @@
-package com.boringkm.simpletodo
+package com.boringkm.simpletodo.view
 
 import android.graphics.Color
 import android.os.Build

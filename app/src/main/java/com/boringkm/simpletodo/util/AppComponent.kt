@@ -1,8 +1,8 @@
 package com.boringkm.simpletodo.util
 
-import com.boringkm.simpletodo.LoginActivity
-import com.boringkm.simpletodo.MainActivity
-import com.boringkm.simpletodo.SplashActivity
+import com.boringkm.simpletodo.view.login.LoginActivity
+import com.boringkm.simpletodo.view.main.MainActivity
+import com.boringkm.simpletodo.view.login.SplashActivity
 import dagger.Component
 import javax.inject.Singleton
 

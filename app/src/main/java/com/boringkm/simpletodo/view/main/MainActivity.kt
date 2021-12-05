@@ -1,4 +1,4 @@
-package com.boringkm.simpletodo
+package com.boringkm.simpletodo.view.main
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,12 +7,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.boringkm.simpletodo.R
 import com.boringkm.simpletodo.adapter.TodoItemAdapter
 import com.boringkm.simpletodo.auth.Auth
 import com.boringkm.simpletodo.domain.Schedule
-import com.boringkm.simpletodo.main.MainContract
-import com.boringkm.simpletodo.main.MainPresenter
 import com.boringkm.simpletodo.util.App
+import com.boringkm.simpletodo.view.BaseActivity
+import com.boringkm.simpletodo.view.login.LoginActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity(), MainContract.View {
@@ -29,7 +30,7 @@ class MainActivity : BaseActivity(), MainContract.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val token = "Bearer ${intent.getStringExtra("idToken")}"
+        val token = intent.getStringExtra("idToken")!!
         presenter = MainPresenter(this, token)
         App.get().getAppComponent().inject(this)
         imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
