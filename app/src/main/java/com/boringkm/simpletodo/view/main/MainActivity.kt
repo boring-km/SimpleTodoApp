@@ -20,8 +20,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private var auth: Auth = Auth()
     private var pressTime: Long = 0L
-    private val itemList = arrayListOf<Schedule>()
-    private val todoItemAdapter = TodoItemAdapter(itemList, this)
+    private val todoItemAdapter = TodoItemAdapter(this)
     private lateinit var presenter: MainContract.Presenter
     private lateinit var imm: InputMethodManager
 
@@ -77,8 +76,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
 
     override fun getTodoList(list: List<Schedule>) {
-        itemList.clear()
-        itemList.addAll(list)
+        todoItemAdapter.addAll(list)
     }
 
     override fun getInsertResult(item: Schedule) {

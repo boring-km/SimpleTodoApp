@@ -11,9 +11,10 @@ import com.boringkm.simpletodo.domain.Schedule
 import kotlinx.android.synthetic.main.todo_item.view.*
 
 class TodoItemAdapter (
-    private val itemList: MutableList<Schedule>,
     private val activity: AppCompatActivity
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val itemList: MutableList<Schedule> = arrayListOf()
 
     private lateinit var inflater: LayoutInflater
     private lateinit var context: Context
@@ -80,7 +81,7 @@ class TodoItemAdapter (
         notifyDataSetChanged()
     }
 
-    fun set(todoList: List<Schedule>) {
+    fun addAll(todoList: List<Schedule>) {
         itemList.clear()
         itemList.addAll(todoList)
         notifyDataSetChanged()

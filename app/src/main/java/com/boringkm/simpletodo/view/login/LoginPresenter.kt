@@ -15,7 +15,7 @@ class LoginPresenter (
             override fun onResult(result: Boolean, message: String) {
                 if (result) {
                     if (provider.isChecked) {
-                        view.login(token)
+                        view.login("Bearer $token")
                     }
                 } else {
                     Log.e("API 호출 에러", message)
