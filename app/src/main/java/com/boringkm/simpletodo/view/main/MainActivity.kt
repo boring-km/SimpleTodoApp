@@ -1,62 +1,59 @@
-package com.boringkm.simpletodo
+package com.boringkm.simpletodo.view.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.boringkm.simpletodo.R
 import com.boringkm.simpletodo.adapter.TodoItemAdapter
 import com.boringkm.simpletodo.auth.Auth
-import com.boringkm.simpletodo.domain.TodoItem
+import com.boringkm.simpletodo.domain.Schedule
+import com.boringkm.simpletodo.util.App
+import com.boringkm.simpletodo.view.BaseActivity
+import com.boringkm.simpletodo.view.login.LoginActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), MainContract.View {
 
-    private var auth: Auth? = null
+    private var auth: Auth = Auth()
     private var pressTime: Long = 0L
-    private val testList = arrayListOf(
-        TodoItem(
-            "Todo 항목 1", false
-        ),
-        TodoItem(
-            "Todo 항목 2", true
-        )
-    )
-    private val todoItemAdapter = TodoItemAdapter(testList, this)
+    private val todoItemAdapter = TodoItemAdapter(this)
+    private lateinit var presenter: MainContract.Presenter
+    private lateinit var imm: InputMethodManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        auth = Auth()
+        val token = intent.getStringExtra("idToken")!!
+        presenter = MainPresenter(this, token)
+        App.get().getAppComponent().inject(this)
+        imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
-        val token = intent.getStringExtra("idToken")
-        Toast.makeText(this, token, Toast.LENGTH_SHORT).show()
-        Log.d("token", token!!)
+        initializeView()
+    }
+
+    private fun initializeView() {
 
         val listView = findViewById<RecyclerView>(R.id.todoListView)
         listView.adapter = todoItemAdapter
 
         todoInputButton.setOnClickListener {
             val todoText = todoEditText.text.toString()
-            if (todoText.isNotBlank()) {
-                todoItemAdapter.add(
-                    TodoItem(
-                        todoText, false
-                    )
-                )
-                todoEditText.setText("")
-            }
+            presenter.insertItem(todoText)
+            todoEditText.setText("")
         }
-        
+
         todoEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
                 todoInputButton.callOnClick()
+                imm.hideSoftInputFromWindow(todoEditText.windowToken, 0)
             }
-            return@setOnEditorActionListener false
+            return@setOnEditorActionListener true
         }
 
         user_menu.setOnClickListener { view ->
@@ -72,8 +69,22 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.start()
+    }
+
+
+    override fun getTodoList(list: List<Schedule>) {
+        todoItemAdapter.addAll(list)
+    }
+
+    override fun getInsertResult(item: Schedule) {
+        todoItemAdapter.add(item)
+    }
+
     private fun logout() {
-        auth!!.signOut()
+        auth.signOut()
         val intent = Intent(this@MainActivity, LoginActivity::class.java)
         startActivity(intent)
         finish()

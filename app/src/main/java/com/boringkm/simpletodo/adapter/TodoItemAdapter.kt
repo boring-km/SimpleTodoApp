@@ -7,13 +7,14 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.boringkm.simpletodo.R
-import com.boringkm.simpletodo.domain.TodoItem
+import com.boringkm.simpletodo.domain.Schedule
 import kotlinx.android.synthetic.main.todo_item.view.*
 
 class TodoItemAdapter (
-    private val itemList: MutableList<TodoItem>,
     private val activity: AppCompatActivity
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val itemList: MutableList<Schedule> = arrayListOf()
 
     private lateinit var inflater: LayoutInflater
     private lateinit var context: Context
@@ -41,9 +42,9 @@ class TodoItemAdapter (
         val selected = itemList[position]
         if (holder is TodoItemListHolder) {
             selected.run {
-                holder.todoItemText.text = data
+                holder.todoItemText.text = title
                 holder.layout.setOnClickListener {
-                    checked = !checked
+                    doneYn = !doneYn!!
                     showCheckedImage(holder)
                 }
                 showCheckedImage(holder)
@@ -63,8 +64,8 @@ class TodoItemAdapter (
         }
     }
 
-    private fun TodoItem.showCheckedImage(holder: TodoItemListHolder) {
-        if (checked) {
+    private fun Schedule.showCheckedImage(holder: TodoItemListHolder) {
+        if (doneYn!!) {
             holder.todoImage.setImageResource(R.drawable.checked)
         } else {
             holder.todoImage.setImageResource(R.drawable.unchecked)
@@ -75,12 +76,12 @@ class TodoItemAdapter (
         return itemList.size
     }
 
-    fun add(item: TodoItem) {
+    fun add(item: Schedule) {
         itemList.add(item)
         notifyDataSetChanged()
     }
 
-    fun set(todoList: List<TodoItem>) {
+    fun addAll(todoList: List<Schedule>) {
         itemList.clear()
         itemList.addAll(todoList)
         notifyDataSetChanged()
