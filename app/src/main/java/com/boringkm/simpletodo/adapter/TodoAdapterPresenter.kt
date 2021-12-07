@@ -5,7 +5,7 @@ import com.boringkm.simpletodo.view.ProviderResultListener
 
 class TodoAdapterPresenter(
     private val view: TodoAdapterContract.View,
-    private val token: String
+    token: String
 ): TodoAdapterContract.Presenter {
 
     private val provider = TodoAdapterProvider(token)
@@ -14,7 +14,7 @@ class TodoAdapterPresenter(
         provider.changeState(id, doneYn, object : ProviderResultListener{
             override fun onResult(result: Boolean, message: String) {
                 if (result) {
-                    view.getChanged(id, !doneYn)
+                    view.getChanged(id, doneYn)
                 } else {
                     Log.e("API 호출 에러", message)
                 }

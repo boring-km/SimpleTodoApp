@@ -51,7 +51,7 @@ class TodoItemAdapter (
                 showCheckedImage(holder)
                 holder.todoItemText.text = title
                 holder.layout.setOnClickListener {
-                    presenter.changeState(id!!, doneYn!!)
+                    presenter.changeState(id!!, !doneYn!!)
                 }
                 holder.todoMenuButton.setOnClickListener { view ->
                     val popupMenu = PopupMenu(context, view)
