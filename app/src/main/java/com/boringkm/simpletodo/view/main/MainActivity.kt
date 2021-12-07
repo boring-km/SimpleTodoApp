@@ -20,16 +20,17 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private var auth: Auth = Auth()
     private var pressTime: Long = 0L
-    private val todoItemAdapter = TodoItemAdapter(this)
+    private lateinit var todoItemAdapter: TodoItemAdapter
     private lateinit var presenter: MainContract.Presenter
     private lateinit var imm: InputMethodManager
+    private lateinit var token: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val token = intent.getStringExtra("idToken")!!
+        token = intent.getStringExtra("idToken")!!
         presenter = MainPresenter(this, token)
         App.get().getAppComponent().inject(this)
         imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -39,6 +40,7 @@ class MainActivity : BaseActivity(), MainContract.View {
 
     private fun initializeView() {
 
+        todoItemAdapter = TodoItemAdapter(this, token)
         val listView = findViewById<RecyclerView>(R.id.todoListView)
         listView.adapter = todoItemAdapter
 
