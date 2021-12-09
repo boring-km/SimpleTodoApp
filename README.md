@@ -1,7 +1,7 @@
 # Simple Todo App - Android 버전
 
 - 단순한 Todo App에서 시작
-- Kotlin 1.5.10
+- Kotlin 1.5.10 -> Flutter 2.8.0 • channel stable
 - 서버: https://github.com/ghals5737/ToDoListApi
 
 ### 예상되는 기본 기능
