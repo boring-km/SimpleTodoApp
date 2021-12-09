@@ -8,19 +8,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.boringkm.simpletodo.R
 import com.boringkm.simpletodo.domain.Schedule
+import com.boringkm.simpletodo.domain.ScheduleReq
+import com.boringkm.simpletodo.util.App
+import com.google.android.gms.common.api.Api
 import kotlinx.android.synthetic.main.todo_item.view.*
 
 class TodoItemAdapter (
-    private val activity: AppCompatActivity
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val activity: AppCompatActivity,
+    private val token: String
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), TodoAdapterContract.View {
 
     private val itemList: MutableList<Schedule> = arrayListOf()
 
     private lateinit var inflater: LayoutInflater
     private lateinit var context: Context
+    private lateinit var presenter: TodoAdapterPresenter
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         context = activity.applicationContext
+        presenter = TodoAdapterPresenter(this, token)
         inflater = LayoutInflater.from(context)
         return TodoItemListHolder(parent)
     }
@@ -42,12 +48,11 @@ class TodoItemAdapter (
         val selected = itemList[position]
         if (holder is TodoItemListHolder) {
             selected.run {
+                showCheckedImage(holder)
                 holder.todoItemText.text = title
                 holder.layout.setOnClickListener {
-                    doneYn = !doneYn!!
-                    showCheckedImage(holder)
+                    presenter.changeState(id!!, !doneYn!!)
                 }
-                showCheckedImage(holder)
                 holder.todoMenuButton.setOnClickListener { view ->
                     val popupMenu = PopupMenu(context, view)
                     popupMenu.inflate(R.menu.item_popup)
@@ -85,5 +90,15 @@ class TodoItemAdapter (
         itemList.clear()
         itemList.addAll(todoList)
         notifyDataSetChanged()
+    }
+
+    override fun getChanged(id: String, doneYn: Boolean) {
+        for (i in 0..itemList.size) {
+            if (itemList[i].id == id) {
+                itemList[i].doneYn = doneYn
+                notifyDataSetChanged()
+                break
+            }
+        }
     }
 }
