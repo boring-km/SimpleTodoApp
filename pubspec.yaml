@@ -12,7 +12,23 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.4
+  get: ^4.5.1
+
+  # firebase
+  firebase_core: ^1.6.0
+  firebase_auth: ^3.1.1
+  flutter_web_auth: ^0.3.0
+  uuid: ^3.0.4
+
+  # google sign in
+  google_sign_in: ^5.1.0
+
+  # 페이스북 로그인
+  flutter_facebook_auth: ^3.5.1
+
+  # 환경변수
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +39,11 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+
+  fonts:
+    - family: NanumSquareRound
+      fonts:
+        - asset: fonts/NanumSquareRoundOTFL.otf
+        - asset: fonts/NanumSquareRoundOTFR.otf
+        - asset: fonts/NanumSquareRoundOTFB.otf
+        - asset: fonts/NanumSquareRoundOTFEB.otf

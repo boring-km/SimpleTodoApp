@@ -48,3 +48,6 @@ app.*.map.json
 # Extra ignore
 .metadata
 pubspec.lock
+
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
