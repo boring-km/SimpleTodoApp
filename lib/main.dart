@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simpletodo/controller/login_controller.dart';
 import 'package:simpletodo/controller/main_controller.dart';
+import 'package:simpletodo/firebase_options.dart';
 import 'package:simpletodo/view/login_page.dart';
 import 'package:simpletodo/view/main_page.dart';
 // import 'firebase_options.dart';
@@ -10,7 +11,7 @@ import 'package:simpletodo/view/main_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    // options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const SimpleTodoApp());
 }
