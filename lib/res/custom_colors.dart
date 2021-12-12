@@ -9,4 +9,6 @@ class CustomColors {
   static const Color lightRed = Color(0x80ffabab);
 
   static const Color transBlack = Color(0x0dffffff);
+
+  static const Color loginBgColor = Color(0x77777777);
 }

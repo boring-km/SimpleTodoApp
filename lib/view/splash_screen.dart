@@ -32,8 +32,8 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Text(
           'SimpleTodo',
           style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
+            fontSize: 32,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ),

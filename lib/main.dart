@@ -25,7 +25,6 @@ class SimpleTodoApp extends StatelessWidget {
       title: 'SimpleTodo',
       theme: ThemeData(
         fontFamily: 'NanumSquareRound',
-        backgroundColor: Colors.black,
       ),
       initialRoute: '/',
       getPages: [

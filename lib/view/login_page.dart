@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:simpletodo/controller/login_controller.dart';
+import 'package:simpletodo/res/custom_colors.dart';
 import 'package:simpletodo/view/splash_screen.dart';
 
 class LoginPage extends GetView<LoginController> {
@@ -11,7 +12,7 @@ class LoginPage extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: CustomColors.loginBgColor,
       body: GetBuilder<LoginController>(builder: (controller) {
         if (controller.isDialogVisible) {
           return const Center(
@@ -77,7 +78,7 @@ class LoginPage extends GetView<LoginController> {
       onPressed: onPressed,
       icon: Image.asset(
         imgPath,
-        height: 18,
+        height: 30,
       ),
       label: Text(text),
       style: ElevatedButton.styleFrom(
@@ -85,8 +86,8 @@ class LoginPage extends GetView<LoginController> {
         primary: bgColor,
         onPrimary: textColor,
         textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

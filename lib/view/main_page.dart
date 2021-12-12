@@ -7,8 +7,7 @@ class MainPage extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.logger.i('received token', controller.token);
-    controller.logger.i('received name', controller.name);
+    print('received token: ${controller.token}');
     return Scaffold(
       body: Container(
         child: Center(
