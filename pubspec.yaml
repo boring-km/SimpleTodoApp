@@ -46,6 +46,7 @@ flutter:
 
   assets:
     - images/
+    - dev.env
 
   fonts:
     - family: NanumSquareRound
