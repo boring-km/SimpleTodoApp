@@ -67,7 +67,7 @@ class LoginPage extends GetView<LoginController> {
     if (user != null) {
       final token = await user.getIdToken(false);
       final name = user.displayName;
-      Get.offAllNamed('/main?token=$token&name=$name&guest=false');
+      Get.offAllNamed('/main?token=$token&name=$name');
     } else {
       controller.changeDialogState();
     }

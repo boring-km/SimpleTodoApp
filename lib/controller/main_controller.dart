@@ -8,22 +8,35 @@ class MainController extends GetxController {
   late Logger logger;
   late String token;
   late String name;
-  late bool isGuest;
-  MainProvider provider = Get.put(MainProvider());
+  final MainProvider _provider = Get.put(MainProvider());
 
   @override
   void onInit() {
     logger = Logger();
     token = Get.parameters['token']!;
     name = Get.parameters['name']!;
-    isGuest = Get.parameters['guest']! == 'true';
     logger.i('token: $token, name: $name');
-    getTodoList();
     super.onInit();
   }
 
   getTodoList() async {
-    return await provider.callData(token);
+    return await _provider.getTodoList(token);
+  }
+  
+  getTodoListWithTitle(String title) async {
+    return await _provider.getScheduleWithTitle(token, title);
+  }
+
+  insertSchedule(Map<String, dynamic> body) async {
+    return await _provider.insertSchedule(token, body);
+  }
+
+  updateSchedule(String id, Map<String, dynamic> body) async {
+    return await _provider.updateSchedule(token, id, body);
+  }
+
+  deleteSchedule(String id) async {
+    return await _provider.deleteSchedule(token, id);
   }
 
 }

@@ -1,32 +1,55 @@
-import 'dart:collection';
-import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:simpletodo/domain/schedule_res.dart';
+import 'package:simpletodo/provider/util/net_utils.dart';
 
 class MainProvider extends GetConnect {
 
-  String url = 'http://192.168.200.166:8080/api'; // Test URL
+  late NetUtils utils;
 
-  Future<List<ScheduleRes>> callData(String token) async {
-    // url = dotenv.env['API_URL']!;
-    var header = _withToken(token);
-    final response = await get('$url/schedule', headers: header,);
-    final String? body = response.bodyString;
-    if (body == null || body.isEmpty) {
-      return [ScheduleRes.nullObject()];
-    }
-    var dataList = json.decode(body);
+  MainProvider() {
+    utils = NetUtils();
+  }
+
+  Future<List<ScheduleRes>> getTodoList(String token) async {
+    final apiUrl = '${utils.url}/schedule';
+    final header = utils.withToken(token);
+    final bodyData = await utils.getBodyData(apiUrl, header);
     List<ScheduleRes> result = [];
-    for (var item in dataList) {
+    for (var item in bodyData) {
       result.add(ScheduleRes.fromJson(item));
     }
     return result;
   }
 
-  Map<String, String> _withToken(String token) {
-    Map<String, String> header = HashMap();
-    header['Authorization'] = 'Bearer $token';
-    return header;
+  Future<List<ScheduleRes>> getScheduleWithTitle(String token, String title) async {
+    final apiUrl = '${utils.url}/schedule/$title';
+    final header = utils.withToken(token);
+    final bodyData = await utils.getBodyData(apiUrl, header);
+    List<ScheduleRes> result = [];
+    for (var item in bodyData) {
+      result.add(ScheduleRes.fromJson(item));
+    }
+    return result;
+  }
+
+  Future<ScheduleRes> insertSchedule(String token, Map<String, dynamic> body) async {
+    final apiUrl = '${utils.url}/schedule';
+    final header = utils.withToken(token);
+    final bodyData = await utils.postData(apiUrl, header, body);
+    return ScheduleRes.fromJson(bodyData);
+  }
+
+  Future<ScheduleRes> updateSchedule(String token, String id, Map<String, dynamic> body) async {
+    final apiUrl = '${utils.url}/schedule/$id';
+    final header = utils.withToken(token);
+    final bodyData = await utils.updateData(apiUrl, header, body);
+    return ScheduleRes.fromJson(bodyData);
+  }
+
+  Future<ScheduleRes> deleteSchedule(String token, String id) async {
+    final apiUrl = '${utils.url}/schedule/$id';
+    final header = utils.withToken(token);
+    final bodyData = await utils.deleteData(apiUrl, header);
+    return ScheduleRes.fromJson(bodyData);
   }
 }
