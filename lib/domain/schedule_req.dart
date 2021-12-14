@@ -19,6 +19,8 @@ class ScheduleReq {
 
   ScheduleReq(this.userId, this.title, this.des, this.doneYn);
 
+  factory ScheduleReq.onlyTitle(String data) => ScheduleReq(null, data, '', false);
+
   factory ScheduleReq.fromJson(Map<String, dynamic> json) => _$ScheduleReqFromJson(json);
 
   Map<String, dynamic> toJson() => _$ScheduleReqToJson(this);

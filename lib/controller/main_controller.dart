@@ -1,5 +1,8 @@
+import 'dart:collection';
+
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:simpletodo/domain/schedule_req.dart';
 import 'package:simpletodo/domain/schedule_res.dart';
 import 'package:simpletodo/provider/main_provider.dart';
 
@@ -9,6 +12,9 @@ class MainController extends GetxController {
   late String token;
   late String name;
   final MainProvider _provider = Get.put(MainProvider());
+
+  List<ScheduleRes> todoList = [];
+
 
   @override
   void onInit() {
@@ -20,18 +26,22 @@ class MainController extends GetxController {
   }
 
   getTodoList() async {
-    return await _provider.getTodoList(token);
+    todoList = await _provider.getTodoList(token);
+    update();
   }
   
   getTodoListWithTitle(String title) async {
     return await _provider.getScheduleWithTitle(token, title);
   }
 
-  insertSchedule(Map<String, dynamic> body) async {
-    return await _provider.insertSchedule(token, body);
+  insertSchedule(String data) async {
+    var schedule = ScheduleReq.onlyTitle(data);
+    var result = await _provider.insertSchedule(token, schedule);
+    todoList.add(result);
+    update();
   }
 
-  updateSchedule(String id, Map<String, dynamic> body) async {
+  updateSchedule(String id, ScheduleReq body) async {
     return await _provider.updateSchedule(token, id, body);
   }
 

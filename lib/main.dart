@@ -30,7 +30,7 @@ class SimpleTodoApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => const LoginPage(), binding: LoginBindings()),
-        GetPage(name: '/main', page: () => const MainPage(), binding: MainBindings()),
+        GetPage(name: '/main', page: () => MainPage(), binding: MainBindings()),
       ],
     );
   }

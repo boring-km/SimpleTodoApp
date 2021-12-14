@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:simpletodo/domain/schedule_req.dart';
 import 'package:simpletodo/domain/schedule_res.dart';
 import 'package:simpletodo/provider/util/net_utils.dart';
 
@@ -32,17 +33,17 @@ class MainProvider extends GetConnect {
     return result;
   }
 
-  Future<ScheduleRes> insertSchedule(String token, Map<String, dynamic> body) async {
+  Future<ScheduleRes> insertSchedule(String token, ScheduleReq body) async {
     final apiUrl = '${utils.url}/schedule';
     final header = utils.withToken(token);
-    final bodyData = await utils.postData(apiUrl, header, body);
+    final bodyData = await utils.postData(apiUrl, header, body.toJson());
     return ScheduleRes.fromJson(bodyData);
   }
 
-  Future<ScheduleRes> updateSchedule(String token, String id, Map<String, dynamic> body) async {
+  Future<ScheduleRes> updateSchedule(String token, String id, ScheduleReq body) async {
     final apiUrl = '${utils.url}/schedule/$id';
     final header = utils.withToken(token);
-    final bodyData = await utils.updateData(apiUrl, header, body);
+    final bodyData = await utils.updateData(apiUrl, header, body.toJson());
     return ScheduleRes.fromJson(bodyData);
   }
 
