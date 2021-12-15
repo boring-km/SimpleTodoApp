@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:simpletodo/domain/schedule_req.dart';
@@ -35,9 +33,18 @@ class MainController extends GetxController {
   }
 
   insertSchedule(String data) async {
+    if (data.isEmpty) return;
     var schedule = ScheduleReq.onlyTitle(data);
     var result = await _provider.insertSchedule(token, schedule);
     todoList.add(result);
+    update();
+  }
+
+  changeDoneYn(int index) async {
+    var item = todoList[index];
+    var body = ScheduleReq(item.userId, item.title, item.des, !item.doneYn!);
+    var result = await _provider.updateSchedule(token, item.id!, body);
+    todoList[index] = result;
     update();
   }
 

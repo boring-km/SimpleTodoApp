@@ -24,6 +24,7 @@ class SimpleTodoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'SimpleTodo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'NanumSquareRound',
       ),
