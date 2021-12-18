@@ -42,14 +42,29 @@ class MainController extends GetxController {
 
   changeDoneYn(int index) async {
     var item = todoList[index];
-    var body = ScheduleReq(item.userId, item.title, item.des, !item.doneYn!);
+    item.doneYn = !item.doneYn!;
+    var body = ScheduleReq.fromScheduleRes(item);
     var result = await _provider.updateSchedule(token, item.id!, body);
     todoList[index] = result;
     update();
   }
 
-  updateSchedule(String id, ScheduleReq body) async {
-    return await _provider.updateSchedule(token, id, body);
+  changeTitle(int index, String title) async {
+    var item = todoList[index];
+    item.title = title;
+    var body = ScheduleReq.fromScheduleRes(item);
+    var result = await _provider.updateSchedule(token, item.id!, body);
+    todoList[index] = result;
+    update();
+  }
+
+  changeDetail(int index, String detail) async {
+    var item = todoList[index];
+    item.des = detail;
+    var body = ScheduleReq.fromScheduleRes(item);
+    var result = await _provider.updateSchedule(token, item.id!, body);
+    todoList[index] = result;
+    update();
   }
 
   deleteSchedule(String id) async {

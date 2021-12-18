@@ -145,13 +145,13 @@ class MainPage extends GetView<MainController> {
                     onSelected: (menu) {
                       switch(menu) {
                         case MenuType.update:
-                          showUpdateDialog(context, todoList[i].title ?? '');
+                          showUpdateDialog(context, i);
                           break;
                         case MenuType.detail:
-                          showDetailDialog(context, todoList[i]);
+                          showDetailDialog(context, i);
                           break;
                         case MenuType.delete:
-                          showDeleteDialog(context);
+                          showDeleteDialog(context, todoList[i].id!);
                           break;
                       }
                     },
@@ -165,28 +165,31 @@ class MainPage extends GetView<MainController> {
     );
   }
 
-  void showDeleteDialog(BuildContext context) {
+  void showDeleteDialog(BuildContext context, String id) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('삭제하기'),
-          content: Text('정말로 삭제하시겠습니까?'),
+          title: const Text('삭제하기'),
+          content: const Text('정말로 삭제하시겠습니까?'),
           actions: <Widget>[
             TextButton(
-              child: Text('취소',
+              child: const Text('취소',
                 style: TextStyle(color: Colors.grey,),
               ),
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                Navigator.of(dialogContext).pop();
               },
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                controller.deleteSchedule(id);
+                Navigator.of(dialogContext).pop();
+              },
               style: ElevatedButton.styleFrom(
                 primary: Colors.red,
               ),
-              child: Text('삭제'),
+              child: const Text('삭제'),
             ),
           ],
         );
@@ -194,7 +197,8 @@ class MainPage extends GetView<MainController> {
     );
   }
 
-  void showDetailDialog(BuildContext context, ScheduleRes item) {
+  void showDetailDialog(BuildContext context, int index) {
+    var item = controller.todoList[index];
     String title = item.title ?? '';
     String des = item.des ?? '';
     _popupTextController.text = des;
@@ -216,16 +220,19 @@ class MainPage extends GetView<MainController> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('취소',
+              child: const Text('취소',
                 style: TextStyle(color: Colors.grey,),
               ),
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                Navigator.of(dialogContext).pop();
               },
             ),
             ElevatedButton(
-              onPressed: () {},
-              child: Text('수정'),
+              onPressed: () async {
+                await controller.changeDetail(index, _popupTextController.text);
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('수정'),
             ),
           ],
         );
@@ -233,13 +240,13 @@ class MainPage extends GetView<MainController> {
     );
   }
 
-  void showUpdateDialog(BuildContext context, String before) {
-    _popupTextController.text = before;
+  void showUpdateDialog(BuildContext context, int index) {
+    _popupTextController.text = controller.todoList[index].title ?? '';
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('수정하기'),
+          title: const Text('수정하기'),
           content: TextField(
             controller: _popupTextController,
             decoration: InputDecoration(
@@ -253,16 +260,19 @@ class MainPage extends GetView<MainController> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('취소',
+              child: const Text('취소',
                 style: TextStyle(color: Colors.grey,),
               ),
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                Navigator.of(dialogContext).pop();
               },
             ),
             ElevatedButton(
-              onPressed: () {},
-              child: Text('수정'),
+              onPressed: () async {
+                await controller.changeTitle(index, _popupTextController.text);
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('수정'),
             ),
           ],
         );
