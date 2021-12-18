@@ -8,8 +8,8 @@ class NetUtils extends GetConnect {
   late String url;
 
   NetUtils() {
-    url = dotenv.env['API_URL']!;
-    // url = 'http://192.168.35.2:8080/api';
+    // url = dotenv.env['API_URL']!;
+    url = 'http://192.168.35.2:8080/api';
   }
 
   Future<dynamic> getBodyData(String apiUrl, Map<String, String> header) async {
