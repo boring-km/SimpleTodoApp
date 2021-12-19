@@ -22,8 +22,6 @@ class LoginController extends GetxController {
       final token = await user.getIdToken();
       final name = user.displayName;
       Get.offAllNamed('/main?token=$token&name=$name');
-    } else {
-      changeDialogState();
     }
   }
 

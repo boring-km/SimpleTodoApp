@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simpletodo/controller/main_controller.dart';
 import 'package:simpletodo/domain/schedule_res.dart';
-import 'package:simpletodo/utils/Log.dart';
 import 'package:simpletodo/utils/menu_type.dart';
 
 class MainPage extends GetView<MainController> {
@@ -13,14 +12,11 @@ class MainPage extends GetView<MainController> {
 
   final _popupTextController = TextEditingController();
 
-  MainPage({Key? key}): super(key: key) {
-    controller.getTodoList();
-  }
+  MainPage({Key? key}): super(key: key);
 
   @override
   Widget build(BuildContext context) {
 
-    Log.d('received token: ${controller.token}');
     double width = context.width;
     double height = context.height;
 
@@ -32,6 +28,20 @@ class MainPage extends GetView<MainController> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          GestureDetector(
+            onTap: () async {
+              await controller.logout();
+              Get.offAndToNamed('/');
+            },
+            child: const Padding(
+              padding: EdgeInsets.only(right: 16.0),
+              child: Icon(
+                Icons.logout,
+              ),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: GetBuilder<MainController>(builder: (controller) {
@@ -43,37 +53,40 @@ class MainPage extends GetView<MainController> {
                 _buildTodoListView(todoList),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: width * (7/9),
-                        height: 50,
-                        child: TextField(
-                          controller: _inputController,
-                          onSubmitted: (String text) async {
-                            insertTodo(controller, text, context);
-                          },
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Todo 작성',
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: width * (7/9),
+                          height: 50,
+                          child: TextField(
+                            controller: _inputController,
+                            onSubmitted: (String text) async {
+                              insertTodo(controller, text, context);
+                            },
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Todo 작성',
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10,),
-                      SizedBox(
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            var text = _inputController.text;
-                            insertTodo(controller, text, context);
-                          },
-                          child: const Text('등록',
-                            style: TextStyle(fontSize: 18,),
+                        const SizedBox(width: 10,),
+                        SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              var text = _inputController.text;
+                              insertTodo(controller, text, context);
+                            },
+                            child: const Text('등록',
+                              style: TextStyle(fontSize: 18,),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -108,7 +121,7 @@ class MainPage extends GetView<MainController> {
                 FocusScope.of(context).unfocus();
               },
               onLongPress: () {
-
+                showUpdateDialog(context, i);
               },
               child: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -125,7 +138,7 @@ class MainPage extends GetView<MainController> {
                   widthMargin(8),
                   PopupMenuButton(
                     child: Image.asset('images/ic_more_vert.png'),
-                    offset: Offset(0, 24),
+                    offset: const Offset(0, 24),
                     itemBuilder: (context) {
                       return [
                         const PopupMenuItem(
@@ -151,7 +164,7 @@ class MainPage extends GetView<MainController> {
                           showDetailDialog(context, i);
                           break;
                         case MenuType.delete:
-                          showDeleteDialog(context, todoList[i].id!);
+                          showDeleteDialog(context, i);
                           break;
                       }
                     },
@@ -165,7 +178,7 @@ class MainPage extends GetView<MainController> {
     );
   }
 
-  void showDeleteDialog(BuildContext context, String id) {
+  void showDeleteDialog(BuildContext context, int index) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -183,7 +196,7 @@ class MainPage extends GetView<MainController> {
             ),
             ElevatedButton(
               onPressed: () {
-                controller.deleteSchedule(id);
+                controller.deleteSchedule(index);
                 Navigator.of(dialogContext).pop();
               },
               style: ElevatedButton.styleFrom(

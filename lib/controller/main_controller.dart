@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:simpletodo/domain/schedule_req.dart';
@@ -20,6 +21,7 @@ class MainController extends GetxController {
     token = Get.parameters['token']!;
     name = Get.parameters['name']!;
     logger.i('token: $token, name: $name');
+    getTodoList();
     super.onInit();
   }
 
@@ -67,8 +69,17 @@ class MainController extends GetxController {
     update();
   }
 
-  deleteSchedule(String id) async {
-    return await _provider.deleteSchedule(token, id);
+  deleteSchedule(int index) async {
+    var id = todoList[index].id!;
+    var schedule = await _provider.deleteSchedule(token, id);
+    if (schedule.id == id) {
+      todoList.removeAt(index);
+      update();
+    }
+  }
+
+  logout() async {
+    await FirebaseAuth.instance.signOut();
   }
 
 }
