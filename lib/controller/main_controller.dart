@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:simpletodo/domain/schedule_req.dart';
 import 'package:simpletodo/domain/schedule_res.dart';
 import 'package:simpletodo/provider/main_provider.dart';
+import 'package:simpletodo/utils/Log.dart';
 
 class MainController extends GetxController {
 
@@ -80,6 +82,13 @@ class MainController extends GetxController {
 
   logout() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  final platform = MethodChannel('flutter.android.channel');
+
+  getMyCacheDirectory() async {
+    final result = await platform.invokeMethod("getMyCacheDirectory");
+    Log.d('myCacheDir: $result');
   }
 
 }

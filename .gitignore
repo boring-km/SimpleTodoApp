@@ -51,3 +51,9 @@ pubspec.lock
 
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+/.gradle/6.7.1/fileChanges/last-build.bin
+/.gradle/6.7.1/fileHashes/fileHashes.lock
+/.gradle/6.7.1/gc.properties
+/.gradle/checksums/checksums.lock
+/.gradle/configuration-cache/gc.properties
+/.gradle/vcs-1/gc.properties

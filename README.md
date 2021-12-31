@@ -7,3 +7,6 @@
 ### 예상되는 기본 기능
 - SNS 로그인
 - TODO 항목 CRUD (작성, 조회, 내용 수정 및 완료 여부 체크, 삭제)
+
+### UI Test 관련 블로그
+- https://www.repeato.app/how-to-write-flutter-ui-tests/
