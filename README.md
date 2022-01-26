@@ -3,6 +3,7 @@
 - 단순한 Todo App에서 시작
 - Kotlin 1.5.10 -> Flutter 2.8.0 • channel stable
 - 서버: https://github.com/ghals5737/ToDoListApi
+  - 서버 쪽 작업 진행 중인지 확인 필요
 
 ### 예상되는 기본 기능
 - SNS 로그인

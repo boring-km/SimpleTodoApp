@@ -2,10 +2,14 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class NetUtils extends GetConnect {
 
   late String url;
+  Logger logger = Logger(
+    printer: PrettyPrinter(),
+  );
 
   NetUtils() {
     url = dotenv.env['API_URL']!;
@@ -14,14 +18,18 @@ class NetUtils extends GetConnect {
 
   Future<dynamic> getBodyData(String apiUrl, Map<String, String> header) async {
     final response = await get(apiUrl, headers: header,);
-    final body = response.bodyString;
-    if (body == null || body.isEmpty) {
-      throw Error();
-    }
-    try {
-      return json.decode(body);
-    } catch (e) {
-      return body;
+    if (response.isOk) {
+      final body = response.bodyString;
+      if (body == null || body.isEmpty) {
+        throw Error();
+      }
+      try {
+        return json.decode(body);
+      } catch (e) {
+        return body;
+      }
+    } else {
+      logger.e('API 에러'); 
     }
   }
 
